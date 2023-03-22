@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Saira:wght@100&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Saira&display=swap');
+html,
+body {
+ font-family: 'Roboto', Helvetica, sans-serif;
+}
+.center {
+   display: block;
+   margin-left: auto;
+   margin-right: auto;
+   width: 50%;
+}
+.centered {
+   position: relative;
+   text-align: center;
+}
+
+
+.error-message {
+   color :red;
+}
+.message{
+   background-color: blanchedalmond;
+   color: rgba(0, 0, 0, 0.796);
+}
+
+select#theme{
+   font-family: 'FontAwesome', 'Arial'
+ }
+  
+nav{
+   font-family: 'Saira','Roboto',Helvetica;
+   font-size: 20px;
+   margin-left: 3rem;
+   margin-right: 3rem;
+   margin-top: -20px;
+   /* margin-bottom: -50px; */
+   padding-bottom:0px;
+   border-bottom: 5px solid ;
+}
+
+ ul{
+   padding-bottom: 0px;
+ }
+#brand{
+   font-family: 'Saira','Roboto',Helvetica;
+}

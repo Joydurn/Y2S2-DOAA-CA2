@@ -1,0 +1,181 @@
+<!-- Inherits from layout.html -->
+{% extends "layout.html" %}
+{% set active_page = "user" %}
+<!-- The block content replace the one encapsulated in layout.html -->
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/loginRegister.css')}}">
+<div class="container centered">
+  <summary>
+    <h3>Predictions made easy.</h3>
+  </summary>
+
+</div>
+<div class="container centered">
+  <main class="container">
+    <article class="grid">
+      <div>
+        {% with messages = get_flashed_messages(with_categories=true)%}
+        {% if messages %}
+        {% for category, message in messages %}
+        <article class="centered message">
+          {{ message }}
+        </article>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <hgroup>
+          <h2>Welcome back {{session['username']}}!</h2>
+          <h3>Your User ID is {{session['userid']}} and your role is a {{session['usertype']}}</h3>
+          <h6>Not sure where to go? Get started by doing some predictions <a href="/home">here</a> !</h6>
+        </hgroup>
+      </div>
+      <div>
+        <img src="{{ url_for('static',filename='images/splash.jpg')}}">
+      </div>
+    </article>
+  </main>
+  {% if form.errors %}
+  {% for field,message in form.errors.items() %}
+  <article class="centered message">
+    ERROR: {{ message[0] }}
+  </article>
+  {% endfor %}
+  {% endif %}
+</div>
+<br><br>
+<div id='grid' class="row">
+  <!--FILTERS-->
+  <div class="col-2">
+
+    <form method="post">
+      {{ form.csrf_token() }}
+      {{form.hidden_tag()}}
+      {{form.submit}}
+
+      <a href="/user/{{session['username']}}" class="secondary center" role="button" >Reset</a>
+      <br>
+
+      {{form.search.label}}
+      {{form.search}}
+
+      {{form.pred20.label}}
+      {{form.pred20}}
+      {{form.pred100.label}}
+      {{form.pred100}}
+
+      {{form.startdate.label}}
+      {{form.startdate}}
+
+      {{form.enddate.label}}
+      {{form.enddate}}
+
+
+    </form>
+  </div>
+
+  <!--DISPLAY TABLE-->
+  <div class="col-10">
+    <details>
+      <summary>
+        <h2>User History</h2><a>Click for help</a>
+      </summary>
+      With this page you can search and filter the predictions history. For the Search keyword it will search all
+      columns for matching words. For the boxes with multiple choice you can hold Ctrl on your keyboard to select
+      multiple. Start and end date are inclusive. Press filter to apply all filters, press reset to reset to default
+      filters. Accuracy scores are dynamic, entries without the respective accuracies will not be counted
+    </details>
+    <h6>{{entries|length}} entries
+      {% if accuracy100 is not none%}&nbsp&nbsp&nbsp&nbspCIFAR100 Accuracy: {{accuracy100|round(2)}}%{% endif %}
+      {% if accuracy20 is not none%} &nbsp&nbspCIFAR20 Accuracy: {{accuracy20|round(2)}}%
+      {% endif %}
+
+    </h6>
+    <hr>
+    <figure>
+      <table role="grid">
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>Image</th>
+            <th>ImgPath</th>
+            <th>Prediction20</th>
+            <th>Label20</th>
+            <th>Accuracy20</th>
+            <th>Prediction100</th>
+            <th>Label100</th>
+            <th>Accuracy100</th>
+            <th>Timestamp</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if entries %}
+          {% for entry in entries %}
+          <tr>
+            <td>{{entry.id}}</td>
+            <td><img src="{{url_for('static',filename=entry.imgPath ) }}" style="width: 80px;"></td>
+            <td>{{ entry.imgPath}}</td>
+            <td>{{ entry.prediction20}}</td>
+            <td>{{ entry.label20}}</td>
+
+            <!--accuracy-->
+            <!-- if true or false accuracy OR there is no prediction at all, dont show the form-->
+            {% if entry.accuracy20 is not none or not entry.prediction20%}
+            <td>{{ entry.accuracy20}}</td>
+            {% else %}
+            <td>
+              <form class="edit" action="/edit20/{{entry.id}}" method="post" novalidate>
+                <input type="hidden" name="accuracy" value="True">
+                <input type="submit" class="secondary" value="True">
+              </form>
+              <form class="edit" action="/edit20/{{entry.id}}" method="post" novalidate>
+                <input type="hidden" name="accuracy" value="False">
+                <input type="submit" class="secondary" value="False">
+              </form>
+            </td>
+            {% endif %}
+
+            <td>{{ entry.prediction100}}</td>
+            <td>{{ entry.label100}}</td>
+            <!--accuracy-->
+            {% if entry.accuracy100 is not none or not entry.prediction100 %}
+            <td>{{ entry.accuracy100}}</td>
+            {% else %}
+            <td>
+              <form class="edit" action="/edit100/{{entry.id}}" method="post" novalidate>
+                <input type="hidden" name="accuracy" value="True">
+                <input type="submit" class="secondary" value="True">
+              </form>
+              <form class="edit" action="/edit100/{{entry.id}}" method="post" novalidate>
+                <input type="hidden" name="accuracy" value="False">
+                <input type="submit" class="secondary" value="False">
+              </form>
+            </td>
+            {% endif %}
+            <td>{{ entry.predicted_on.strftime("%d %b %Y %H:%M")}}</td>
+          </tr>
+          {% endfor %}
+          {% endif %}
+        </tbody>
+      </table>
+    </figure>
+  </div>
+</div>
+<style>
+  #grid {
+    margin-left: 5%;
+    margin-right: 5%;
+  }
+
+  table {
+    font-size: medium;
+  }
+
+  th {
+    font-size: medium;
+  }
+</style>
+<!--USE BOOTSTRAP FOR GRID SYSTEM-->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap-grid.min.css" />
+
+
+{% endblock %}

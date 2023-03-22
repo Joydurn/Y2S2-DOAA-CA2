@@ -1,0 +1,95 @@
+<!-- Inherits from layout.html -->
+{% extends "layout.html" %}
+{% set active_page = "batch" %}
+<!-- The block content replace the one encapsulated in layout.html -->
+{% block content %}
+<div class="container centered" >
+   {% with messages = get_flashed_messages(with_categories=true)%}
+   {% if messages %}
+   {% for category, message in messages %}
+   <article class="centered message">
+   {{ message }}
+   </article>
+   {% endfor %}
+   {% endif %}
+   {% endwith %}
+   <details style="border-bottom: 2px solid #837373">
+      
+      <summary>
+         <h3>Batch Predictions.</h3>
+         <a>Click me!</a>
+      </summary>
+      <article>
+         <blockquote>
+            <h4>"With batch-wise predictions, AI apps become the architects of a smarter future, building knowledge batch by batch."</h4>
+            <footer>
+              <cite>- Andrew Ng, computer scientist and entrepreneur.</cite>
+            </footer>
+          </blockquote>
+          With this page you can make predictions on multiple images at once on both the CIFAR20 and CIFAR100 models. 
+          <br><br>Giving a brief overview of the prediction results of images you predicted on too.
+      </article>
+   </details>
+
+<form method="post" enctype="multipart/form-data">
+   {{form.hidden_tag()}}
+   {% for error in form.images.errors %} 
+      <span style="color: red;"">{{error}}</span>
+   {% endfor %}
+   
+   <div class="grid">
+      <div >
+         {{form.images(class="form-control")}}
+      </div>
+      <div>
+         {{form.submit(role="button")}}
+      </div>
+   </div>
+</form>
+</div>
+<!-- <div class="container centered"> -->
+   {% if results %}
+   
+      <h2 class="centered">Prediction Results</h2>
+      {% for i,(file_url,prediction20,prediction100,id) in results: %}
+
+         {% if i%3==0 or i==0 %}<div class="grid">{% endif %}
+            <div class="centered col">
+               <h5>{{file_url[8:]}}</h5>
+               <img src="{{url_for('static',filename=file_url ) }}" style="width: 250px;">
+               <h5>CIFAR 20: Coarse Labels</h5>
+               {% for label, value in prediction20.items(): %}
+                  <span><strong>{{label}}</strong>: {{(value*100)|round(2)}}% </span>
+               {% endfor %}
+               <form class="edit center" action="/edit20/{{id}}" method="post" target="_blank" novalidate>
+                  <input type="hidden" name="accuracy" value="True">
+                  <input type="submit" class="secondary" value="True">
+               </form>
+               <form class="edit center" action="/edit20/{{id}}" method="post" target="_blank" novalidate>
+                  <input type="hidden" name="accuracy" value="False">
+                  <input type="submit" class="secondary" value="False">
+               </form>
+               <h5>CIFAR 100: Fine Labels</h5>
+               {% for label, value in prediction100.items(): %}
+                  <span><strong>{{label}}</strong>: {{(value*100)|round(2)}}% </span>
+               {% endfor %}
+               <form class="edit center" action="/edit100/{{id}}" method="post" target="_blank" novalidate>
+                  <input type="hidden" name="accuracy" value="True">
+                  <input type="submit" class="secondary" role="button" value="True">
+               </form>
+               <form class="edit center" action="/edit100/{{id}}" method="post" target="_blank" novalidate>
+                  <input type="hidden" name="accuracy" value="False">
+                  <input type="submit" class="secondary" role="button" value="False">
+               </form>
+            </div>
+         {% if (i+1)%3==0 %}
+         </div><br><br>{% endif %}
+      {% endfor %}
+   {% endif %}
+<!-- </div> -->
+<style>
+.col{
+   padding:1rem;
+}
+</style>
+{% endblock %}

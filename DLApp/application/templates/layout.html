@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html data-theme="{{session.get('theme', 'dark')}}">
+<head>
+ <title>{{title}} - CIFAR AI</title>
+ <link rel="icon" type="image/png" sizes="100x100" href="{{ url_for('static',filename='images/AI_logo.png')}}">
+<link rel="stylesheet" href="https://unpkg.com/@picocss/pico@1.*/css/pico.min.css">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/main.css')}}" />
+<script src="https://kit.fontawesome.com/7ec1efc8de.js" crossorigin="anonymous"></script>
+ <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-Q
+ Wo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+
+</head>
+<body>
+ {% set active_page = active_page|default('home') -%}
+      <nav>
+         <ul>
+           <li>
+            <a href="/"><h1 id='brand'><img src="{{ url_for('static',filename='images/AI_logo.png')}}">&nbsp&nbspCIFAR AI</h1></a>
+            </li>
+         </ul>
+         <ul>
+            
+            
+            
+            {% if session['username'] and session['userid'] and session['usertype'] %}
+              <li><a href="/home" role="{% if active_page=='home' %}button{% endif %}" class="nav-link">
+                <i class="fa-solid fa-house"></i> &nbsp Home </a></li>
+              <li><a href="/batch" role="{% if active_page=='batch' %}button{% endif %}" class="nav-link">
+                <i class="fa-sharp fa-solid fa-layer-group"></i> &nbsp Batches </a></li>
+              {% if session['usertype']=='admin' %}
+              <li><a href="/predictions" role="{% if active_page=='predictions' %}button{% endif %}" class="nav-link">
+                <i class="fa-sharp fa-solid fa-chart-simple"></i> &nbsp Predictions</a></li>
+              {% endif %}
+              <li><a href="/user/{{session['username']}}" role="{% if active_page=='user' %}button{% endif %}" class="nav-link">
+                <i class="fa-solid fa-user"></i> &nbsp {{session['username']}}'s Dashboard </i></a></li>
+              <li><a href="/logout"  class="nav-link">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>  Logout </a></li>
+            {% else %}
+              <li><a href="/login" role="{% if active_page=='login' %}button{% endif %}" class="nav-link"><i class="fa-solid fa-arrow-right-to-bracket"></i>&nbsp Login</a></li>
+              <li><a href="/register" role="{% if active_page=='register' %}button{% endif %}" class="nav-link"><i class="fa-solid fa-user-plus"></i>&nbsp Register</a></li>
+            {% endif %}
+            <li>
+              <form action="{{ url_for('update_theme') }}" method="POST">
+                {{ themeForm.csrf_token }}
+                {#{{ themeForm.theme(class="secondary") }}#}
+                <select name="theme" id="theme" onchange="this.form.submit();">
+                  
+                    <option value="">&#xf042;</option>
+                      <option value="light">&#xf0eb;</option>
+                      <option value="dark">&#xf186; </option>
+                    
+                
+                </select>
+              </form>
+          </li>
+         </ul>
+       </nav>
+      
+      
+
+ <br><br><br>
+ {% block content %}
+ {% endblock %}
+
+</div>
+</body>
+<script src="{{ url_for('static',filename='js/index.js')}}"></script>
+<script src="{{ url_for('static',filename='js/theme_switch.js')}}"></script>
+</html>

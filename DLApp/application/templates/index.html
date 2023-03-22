@@ -1,0 +1,98 @@
+<!-- Inherits from layout.html -->
+{% extends "layout.html" %}
+{% set active_page = "home" %}
+<!-- The block content replace the one encapsulated in layout.html -->
+{% block content %}
+<div class="container centered" >
+   {% with messages = get_flashed_messages(with_categories=true)%}
+   {% if messages %}
+   {% for category, message in messages %}
+   <article class="centered message">
+   {{ message }}
+   </article>
+   {% endfor %}
+   {% endif %}
+   {% endwith %}
+   <details  style="border-bottom: 2px solid #837373">
+      
+      <summary>
+         <h3>Predictions made easy.</h3>
+         <a>Click me!</a>
+      </summary>
+      <article>
+         <blockquote>
+            <h4>"Artificial intelligence is the new electricity."</h4>
+            <footer>
+              <cite>- Andrew Ng, computer scientist and entrepreneur.</cite>
+            </footer>
+          </blockquote>
+         With this app you can make predictions on images with the power of AI. The AI Model was trained on the CIFAR100/CIFAR20 dataset which has thousands of images of general all-rounded images.
+         <br><br>You can choose between 2 models or have both predict together. One is trained on the CIFAR 20 labels which are the 'coarse' labels which are on 20 classes of general items. The other model is trained on CIFAR 100's 'fine' labels with 100 classes of more specific item classes
+         <br><br>After the prediction, please provide feedback on the models' performance! We take all feedback seriously and we store all predictions history in an effort for continious improvement.
+            
+      </article>
+   </details>
+</div>
+<div class="container">
+<form method="post" enctype="multipart/form-data">
+   {{form.hidden_tag()}}
+   <!--model select-->
+   
+   {% for error in form.photo.errors %} 
+      <span style="color: red;"">{{error}}</span>
+   {% endfor %}
+   
+   <div class="grid">
+      <div>
+         <h5>1. Choose Model(s) to Predict with</h5>
+         {{form.model}}
+      </div>
+      <div >
+         <h5>2. Choose Image to predict on</h5>
+         {{form.photo()}}
+      </div>
+      
+   </div>
+   <div>
+      {{form.submit(role="button")}}
+   </div>
+</form>
+<div class="container centered">
+   {% if file_url %}
+   <h5>{{file_url[8:]}}</h5>
+   <img src="{{url_for('static',filename=file_url ) }}" style="width: 400px;">
+   {% endif %}
+   {% if prediction20 or prediction100 %}<h2>Prediction Results</h2>{% endif %}
+   {% if prediction20 %}
+      <h5>CIFAR 20: Coarse Labels</h5>
+      {% for label, value in prediction20.items(): %}
+         <span><strong>{{label}}</strong>: {{(value*100)|round(2)}}% </span>
+      {% endfor %}
+      <form class="edit center" action="/edit20/{{id}}" method="post" target="_blank" novalidate>
+         <input type="hidden" name="accuracy" value="True">
+         <input type="submit" class="secondary" value="True">
+      </form>
+      <form class="edit center" action="/edit20/{{id}}" method="post" target="_blank" novalidate>
+         <input type="hidden" name="accuracy" value="False">
+         <input type="submit" class="secondary" value="False">
+      </form>
+      <br><br>
+   {% endif %}
+   
+   {% if prediction100 %}
+      <h5>CIFAR 100: Fine Labels</h5>
+      {% for label, value in prediction100.items(): %}
+         <span><strong>{{label}}</strong>: {{(value*100)|round(2)}}% </span>
+      {% endfor %}
+      <form class="edit center" action="/edit100/{{id}}" method="post" target="_blank" novalidate>
+         <input type="hidden" name="accuracy" value="True">
+         <input type="submit" class="secondary" role="button" value="True">
+      </form>
+      <form class="edit center" action="/edit100/{{id}}" method="post" target="_blank" novalidate>
+         <input type="hidden" name="accuracy" value="False">
+         <input type="submit" class="secondary" role="button" value="False">
+      </form>
+   {% endif %}
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+<!-- Inherits from layout.html -->
+{% extends "layout.html" %}
+{% set active_page = "login" %}
+<!-- The block content replace the one encapsulated in layout.html -->
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/loginRegister.css')}}">
+<div class="container centered" >
+  <summary>
+      <h3>Predictions made easy.</h3>
+  </summary>
+
+</div>
+<div class="container centered">
+   <main class="container">
+      <article class="grid">
+        <div>
+          {% with messages = get_flashed_messages(with_categories=true)%}
+          {% if messages %}
+          {% for category, message in messages %}
+          <article class="centered message">
+          {{ message }}
+          </article>
+          {% endfor %}
+          {% endif %}
+          {% endwith %}
+          <hgroup>
+            <h1>Login</h1>
+            <h2>Not registered yet? Register <a href="/register">here</a></h2>
+          </hgroup>
+          <form method="post">
+            {{form.hidden_tag()}}
+            <h6>Username</h6>
+            {{form.username}}
+            <h6>Password</h6>
+            {{form.password}}
+            <br><br>
+    
+            {{form.submit}}
+
+          </form>
+        </div>
+        <div>
+         <img src="{{ url_for('static',filename='images/splash.jpg')}}">
+        </div>
+      </article>
+    </main>
+</div>
+
+{% endblock %}

@@ -1,0 +1,59 @@
+<!-- Inherits from layout.html -->
+{% extends "layout.html" %}
+{% set active_page = "register" %}
+<!-- The block content replace the one encapsulated in layout.html -->
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/register.css')}}">
+<div class="container centered" >
+   <details open style="border-bottom: 2px solid #837373">
+      
+      <summary>
+         <h3>Predictions made easy.</h3>
+      </summary>
+      <article>
+         <blockquote>
+            <h4>"Embrace the power of AI, for within its depths lies the key to unlocking a world of endless possibilities. Registering for an AI app is the first step towards a brighter, smarter tomorrow."</h4>
+            <footer>
+              <cite>- John Ming Lee, computer scientist and entrepreneur.</cite>
+            </footer>
+          </blockquote>
+      </article>
+   </details>
+</div>
+<div class="container centered">
+   <main class="container">
+      <article class="grid">
+         <div>
+         {% with messages = get_flashed_messages(with_categories=true)%}
+         {% if messages %}
+         {% for category, message in messages %}
+         <article class="centered message">
+         {{ message }}
+         </article>
+         {% endfor %}
+         {% endif %}
+         {% endwith %}
+
+         <hgroup>
+         <h1>Register</h1>
+         <h2>Already registered? Log in <a href="/login" >here</a></h2>
+         </hgroup>
+         <form method="post">
+         {{form.hidden_tag()}}
+         <h6>Username</h6>
+         {{form.username}}
+         <h6>Password</h6>
+         {{form.password}}
+         <br><br>
+   
+         {{form.submit}}
+
+         </form>
+        </div>
+        <div>
+         <img src="{{ url_for('static',filename='images/splash.jpg')}}">
+        </div>
+      </article>
+    </main>
+</div>
+{% endblock %}
